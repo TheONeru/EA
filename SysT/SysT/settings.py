@@ -26,7 +26,7 @@ SECRET_KEY = 'f*r)i6(ew+o9&8$o*vhev8zem0k8qa-o4bscy6c=%rlszm))(#'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#CELERY_RESULT_BACKEND = 'django-db'
 
 # Application definition
 
