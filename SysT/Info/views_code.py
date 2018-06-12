@@ -2,27 +2,28 @@ import json
 import requests
 import asyncio
 from . import AI_code
+import time
 '''
 Get infomation from oanda api asynchronous
 '''
-async def async_get(uri, ret):
-    if(len(uri)==2):
-        req=requests.get(uri[0], headers = uri[1], timeout=10)
+def async_get(uri, ret):
+    if(len(uri)==2):        
+        req=requests.get(uri[0], headers = uri[1], timeout=1)
         if(req.status_code ==200):
-            ret.append(req.text)
+            ret.append(req.text)            
     elif(len(uri)==3):
-        req=requests.get(uri[0], headers = uri[1], params=uri[2], timeout=10)
+        req=requests.get(uri[0], headers = uri[1], params=uri[2], timeout=1)
         if(req.status_code ==200):
             ret.append(req.text)
 
 def async(uri_list):
     ret=[]
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+    #loop = asyncio.new_event_loop()
+    #asyncio.set_event_loop(loop)
     cors=[async_get(uri, ret) for uri in uri_list]
-    result=asyncio.gather(*cors)
-    loop.run_until_complete(result)
-    loop.close()
+    #result=asyncio.gather(*cors)
+    #loop.run_until_complete(result)
+    #loop.close()
     return ret
 
 '''
@@ -80,6 +81,7 @@ def get_info(request):
         dict_["TRADE_INFO"]=TradeInfo
         operation_info=manage_trade(request)
         dict_["OPERATION_STATE"]=operation_info
+        
         return dict_
     else:
         return "Now we can't get information, Please contact"

@@ -7,7 +7,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <title>Starter Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
@@ -15,16 +14,7 @@
 
     <!-- Custom styles for this template -->
     <link href=" {% static 'Info/css/starter-template.css' %}" rel="stylesheet">
-      <script>
-          window.onload = function() {
-              load_func(null);
-            var POLLING_INTERVAL_TIME_IN_MILLIS = 1000;
-            (function polling(){
-                getInformation();
-                window.setTimeout(polling, POLLING_INTERVAL_TIME_IN_MILLIS)
-            }());            
-            };
-      </script>
+      
   </head>
     
   <body>
@@ -75,16 +65,19 @@
 
     <script>     
     
-     function getInformation(){            
+     function getInformation(){
           $.ajax({
             url: '/info/',
             type:'GET',
             success: function (data) {
                 obj=JSON.parse(data);
-                //console.log(obj.TRADE_INFO[0][0])
                 load_func(obj);
+                console.log("Hey");
+                getInformation();
             }
-        });
+        });        
+         
+         
      }
         
     function load_func(data){
@@ -95,6 +88,7 @@
             
             trade_info.innerHTML='<table class="table table-striped table-sm"><thead><tr><th>#</th><th>通貨ペア</th><th>数量</th><th>タイプ</th><th>約定レート(円)</th><th>現在レート(円)</th><th>評価損益(円)</th><th>評価損益(pip)</th><th>評価損益(%)</th></tr></thead>{%  for i in TRADE_INFO %}<tr><th>{{ i.0 }}</th><th>{{ i.1 }}</th><th>{{ i.2 }}</th><th>{{ i.3 }}</th><th>{{ i.4 }}</th><th>{{ i.5 }}</th>{%if i.6 <= 0 %}<th><font color="red">{{ i.6 }}</font></th>{%elif i.6 > 0 %}<th><font color="green">{{ i.6 }}</font></th>{% endif %}{%if i.7 <= 0 %}<th><font color="red">{{ i.7 }}</font></th>{%elif i.7 > 0 %}<th><font color="green">{{ i.7 }}</font></th>{% endif %}{%if i.8 <= 0 %}<th><font color="red">{{ i.8 }}</font></th>{%elif i.8 > 0 %}<th><font color="green">{{ i.8 }}</font></th>{% endif %}</tr>{% endfor %}</table>';        
         }else{
+            console.time("timer1");
             var a_str='';
             if(data.OPERATION_STATE){
                 a_str='稼働状態　：　<font color="green">ON</font>'
@@ -127,10 +121,22 @@
             
             str +='</table>';
             trade_info.innerHTML=str;
+            console.timeEnd("timer1");
         }
     }
     </script>
-    
+    <script>
+          window.onload = function() {
+              load_func(null);
+            var POLLING_INTERVAL_TIME_IN_MILLIS = 1000;
+            (function polling(){
+                getInformation();
+                console.log("start");
+                //window.setTimeout(polling, POLLING_INTERVAL_TIME_IN_MILLIS);
+            }());            
+            };
+      </script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
   </body>
 </html>

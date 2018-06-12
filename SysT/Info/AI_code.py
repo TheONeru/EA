@@ -27,7 +27,12 @@ class trade_AI():
         """スレッドを停止させる"""
         self.stop_event.set()
         self.thread.join()    #スレッドが停止するのを待つ
+'''
+class Logger_AI():
 
+    def __init__(self)
+
+'''
 class AI_manager():
 
     def __init__(self, instruments_list):
