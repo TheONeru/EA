@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../../../favicon.ico">
     <title>Starter Template for Bootstrap</title>
-
+      
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
 
@@ -39,12 +38,57 @@
 
     <main role="main" class="container">
       <div class="starter-template">
-          <div id="AccountInfo">            
+          <div id="AccountInfo">
+              <h1>Dash Board</h1>
+              <h2>
+              {% if OPERATION_STATE %}稼働状態　：　<font color="green">ON</font>
+              {% else %}稼働状態　：　<font color="red">OFF</font>
+              {% endif %}
+              </h2>
+              <h3>基本情報(Fundamental Information)</h3>
+              <p>預金(Balance)　:　{{ ACCOUNT_INFO.0 }}</p>
+              <p>未確定損益(Unrealized Profit and Loss)　：　{{ ACCOUNT_INFO.1 }}</p>
+              <p>確定損益(Realized Profit and Loss)　：　{{ ACCOUNT_INFO.2 }}</p>
+              <p>必要証拠金(Used Margin)　：　{{ ACCOUNT_INFO.3 }}</p>
+              <p>証拠金残高(Margin Avail)　：　{{ ACCOUNT_INFO.4 }}</p>
           </div>
       <h3>未決済ポジション(Unclosed Position)</h3>
         <p class="lead">Blow table reference positions I'm holding now.</p>
           <div class="table-responsive" id="TradeInfo">
-              
+              <table class="table table-striped table-sm">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>通貨ペア</th>
+                          <th>数量</th>
+                          <th>タイプ</th>
+                          <th>約定レート(円)</th>
+                          <th>現在レート(円)</th>
+                          <th>評価損益(円)</th>
+                          <th>評価損益(pip)</th>
+                          <th>評価損益(%)</th>
+                      </tr>
+                  </thead>
+                  {%  for i in TRADE_INFO %}
+                  <tr>
+                      <th>{{ i.0 }}</th>
+                      <th>{{ i.1 }}</th>
+                      <th>{{ i.2 }}</th>
+                      <th>{{ i.3 }}</th>
+                      <th>{{ i.4 }}</th>
+                      <th>{{ i.5 }}</th>
+                      {%if i.6 <= 0 %}<th><font color="red">{{ i.6 }}</font></th>
+                      {%elif i.6 > 0 %}<th><font color="green">{{ i.6 }}</font></th>
+                      {% endif %}
+                      {%if i.7 <= 0 %}<th><font color="red">{{ i.7 }}</font></th>
+                      {%elif i.7 > 0 %}<th><font color="green">{{ i.7 }}</font></th>
+                      {% endif %}
+                      {%if i.8 <= 0 %}<th><font color="red">{{ i.8 }}</font></th>
+                      {%elif i.8 > 0 %}<th><font color="green">{{ i.8 }}</font></th>
+                      {% endif %}
+                  </tr>
+                  {% endfor %}
+                </table>
           </div>
           
           <div>
@@ -61,8 +105,11 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> -->   
+    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    
     <script>     
     
      function getInformation(){
@@ -72,23 +119,14 @@
             success: function (data) {
                 obj=JSON.parse(data);
                 load_func(obj);
-                console.log("Hey");
                 getInformation();
             }
         });        
          
          
-     }
+     }     
         
     function load_func(data){
-        var account_info = document.getElementById("AccountInfo");
-        var trade_info = document.getElementById("TradeInfo");
-        if(data==null){
-            account_info.innerHTML='<h1>Dash Board</h1><h2>{% if OPERATION_STATE %}稼働状態　：　<font color="green">ON</font>{% elif OPERATION_STATE %}稼働状態　：　<font color="red">OFF</font>{% endif %}</h2><h3>基本情報(Fundamental Information)</h3>\<p>預金(Balance)　:　{{ ACCOUNT_INFO.0 }}</p><p>未確定損益(Unrealized Profit and Loss)　：　{{ ACCOUNT_INFO.1 }}</p><p>確定損益(Realized Profit and Loss)　：　{{ ACCOUNT_INFO.2 }}</p><p>必要証拠金(Used Margin)　：　{{ ACCOUNT_INFO.3 }}</p><p>証拠金残高(Margin Avail)　：　{{ ACCOUNT_INFO.4 }}</p>';
-            
-            trade_info.innerHTML='<table class="table table-striped table-sm"><thead><tr><th>#</th><th>通貨ペア</th><th>数量</th><th>タイプ</th><th>約定レート(円)</th><th>現在レート(円)</th><th>評価損益(円)</th><th>評価損益(pip)</th><th>評価損益(%)</th></tr></thead>{%  for i in TRADE_INFO %}<tr><th>{{ i.0 }}</th><th>{{ i.1 }}</th><th>{{ i.2 }}</th><th>{{ i.3 }}</th><th>{{ i.4 }}</th><th>{{ i.5 }}</th>{%if i.6 <= 0 %}<th><font color="red">{{ i.6 }}</font></th>{%elif i.6 > 0 %}<th><font color="green">{{ i.6 }}</font></th>{% endif %}{%if i.7 <= 0 %}<th><font color="red">{{ i.7 }}</font></th>{%elif i.7 > 0 %}<th><font color="green">{{ i.7 }}</font></th>{% endif %}{%if i.8 <= 0 %}<th><font color="red">{{ i.8 }}</font></th>{%elif i.8 > 0 %}<th><font color="green">{{ i.8 }}</font></th>{% endif %}</tr>{% endfor %}</table>';        
-        }else{
-            console.time("timer1");
             var a_str='';
             if(data.OPERATION_STATE){
                 a_str='稼働状態　：　<font color="green">ON</font>'
@@ -121,22 +159,16 @@
             
             str +='</table>';
             trade_info.innerHTML=str;
-            console.timeEnd("timer1");
-        }
     }
-    </script>
+      </script>
+      
     <script>
           window.onload = function() {
-              load_func(null);
-            var POLLING_INTERVAL_TIME_IN_MILLIS = 1000;
             (function polling(){
                 getInformation();
-                console.log("start");
-                //window.setTimeout(polling, POLLING_INTERVAL_TIME_IN_MILLIS);
-            }());            
+            })();            
             };
-      </script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    </script>
+      
   </body>
 </html>

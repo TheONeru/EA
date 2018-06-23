@@ -1,2 +1,2 @@
-cd C:\Users\theo\Documents\EA\EA\SysT
+cd C:\Users\theo\Documents\TheONeru\EA\SysT
 python manage.py runserver
