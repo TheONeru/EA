@@ -7,23 +7,11 @@ import threading
 '''
 streamingを使うときはoanda.comのapiでなくstreamをつかう
 '''
+
 '''
 AI INFO
 '''
 AI = AI_code.AI_manager(["USD_JPY","AUD_JPY"])#AIクラスの初期化
-
-'''
-POSTリクエストが行われるとAIが起動，ストップ
-'''
-def manage_trade(request):
-    if(request.POST):
-        if(AI.operation_info):
-            AI.stop()
-        else:
-            AI.start()           
-            
-    return AI.operation_info
-
 
 class Polling_Manager():
     def __init__(self, access_token, account_id):
@@ -79,22 +67,23 @@ class Polling_Manager():
             print("Caught exception when connect api")
             s.close()
             return e
-        
-        for line in resp.iter_lines(1):
-            if line and self.stop_event.is_set()==False:
-                try:
-                    line=line.decode("utf-8")
-                    rate=json.loads(line)
-                except Exception as e:
-                    print("Caught exception when coverting message")
-                    return e
 
-                if 'tick' in rate:
-                    self.now_rate=rate["tick"]
-                    self.get_account_info()
-                    self.get_trade_info()
-                    self.check_ret_dict()
-                    self.change_flg=True
+        for line in resp.iter_lines(1):
+            if self.stop_event.is_set()==False:
+                if line:
+                    try:
+                        line=line.decode("utf-8")
+                        rate=json.loads(line)
+                    except Exception as e:
+                        print("Caught exception when coverting message")
+                        return e
+
+                    if 'tick' in rate:
+                        self.now_rate=rate["tick"]
+                        self.get_account_info()
+                        self.get_trade_info()
+                        self.check_ret_dict()
+                        self.change_flg=True
             else:
                 return
                     
@@ -157,6 +146,23 @@ access_token, idの定義(改善の余地あり)
 access_token = 'e777fc0c0a7aedb89e00f91e15a7b415-ac361a890d2fa25b195ba4dbe825f38b'
 account_id = '2828919'
 x=Polling_Manager(access_token, account_id)
+
+
+
+'''
+POSTリクエストが行われるとAIが起動，ストップ
+'''
+def manage_trade(request):
+    if(request.POST):
+        if(AI.operation_info):
+            AI.stop()
+        else:
+            AI.start()
+        x.change_flg=True
+            
+    return AI.operation_info
+
+
 
 '''
 viewで呼び出されて変更があった時のみデータを渡す関数

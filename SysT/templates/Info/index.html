@@ -127,6 +127,9 @@
      }     
         
     function load_func(data){
+            account_info = document.getElementById("AccountInfo")
+            trade_info=document.getElementById("TradeInfo")
+        
             var a_str='';
             if(data.OPERATION_STATE){
                 a_str='稼働状態　：　<font color="green">ON</font>'
