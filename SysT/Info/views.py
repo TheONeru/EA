@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http.response import HttpResponse, HttpResponseRedirect
-from . import views_code, ec_func
+from . import views_code
 import json
 import re
 

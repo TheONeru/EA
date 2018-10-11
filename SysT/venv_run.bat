@@ -1,2 +1,2 @@
-cd C:\Users\theo\Documents\TheONeru\EA\SysT\venv\Scripts
+cd venv\Scripts
 activate
